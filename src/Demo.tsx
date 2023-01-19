@@ -15,6 +15,7 @@ import { Group } from './components/Group'
 import { styled, typography } from './style'
 import { Button } from './components/Button'
 import { Console } from './components/Console'
+import { ETHAuth, Proof } from '@0xsequence/ethauth'
 
 configureLogger({ logLevel: 'DEBUG' })
 
@@ -154,6 +155,25 @@ const App = () => {
     }
   }
 
+  const loginWithEthAuth = async () => {
+    try {
+      const proof = new Proof({ address: await signer.getAddress() });
+      proof.claims.app = 'Demo app';
+      proof.claims.exp = Math.round((new Date()).getTime() / 1000) + (60 * 60 * 24 * 300);
+      const message = proof.messageDigest();
+      const sig = await signer.signMessage(message);
+      proof.signature = sig;
+      const ethauth = new ETHAuth();
+      ethauth.configJsonRpcProvider("https://nodes.sequence.app/mumbai");
+      const encodedProof = ethauth.encodeProof(proof);
+      resetConsole();
+      addNewConsoleLine(`Encoded proof: ${encodedProof}`);
+    } catch (e) {
+      console.error(e);
+      consoleErrorMesssage();
+    }
+  }
+
   const sendETH = async () => {
     try {
       resetConsole()
@@ -238,6 +258,9 @@ const App = () => {
         <Group label="Signing" layout="grid">
           <Button disabled={disableActions} onClick={() => signMessage()}>
             Sign Message
+          </Button>
+          <Button disabled={disableActions} onClick={() => loginWithEthAuth()}>
+            Login with EthAuth
           </Button>
         </Group>
 

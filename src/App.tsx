@@ -26,7 +26,7 @@ import Demo from './Demo'
 
 const App = () => {
   const { chains, provider } = configureChains(
-    [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
+    [chain.polygonMumbai],
     [
       publicProvider()
     ]
@@ -36,7 +36,7 @@ const App = () => {
     {
       groupName: 'Recommended',
       wallets: [
-        sequenceWallet({ chains, connect: { app: 'Demo app', networkId: 137 } }),
+        sequenceWallet({ chains, connect: { app: 'Demo app', networkId: 80001 } }),
         metaMaskWallet({ chains, shimDisconnect: true }),
         rainbowWallet({ chains }),
         walletConnectWallet({ chains }),
